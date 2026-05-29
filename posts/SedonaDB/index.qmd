@@ -1,7 +1,7 @@
 ---
 title: "SedonaDB: A New Era in Database Management"
 author: "Sheldon Downs"
-date: "2026-05-27"
+date: "2026-05-29"
 categories: [news, code, analysis]
 image: ""
 ---
