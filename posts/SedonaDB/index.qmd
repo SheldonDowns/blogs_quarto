@@ -1,7 +1,7 @@
 ---
 title: "SedonaDB vs GeoPandas: A Spatial Data Showdown"
 author: "Sheldon Downs"
-date: "2026-05-29"
+date: "2026-06-10"
 categories: [code, analysis, tools]
 image: "SedonaDB.png"
 ---
@@ -126,4 +126,6 @@ ecosystem for a long time to come.
 
 ## References
 
-SedonaDB Image: https://sedona.apache.org/sedonadb/latest/
+- SedonaDB Image: https://sedona.apache.org/sedonadb/latest/
+- Apache Sedona. (2026). *SedonaDB Documentation*. https://sedona.apache.org/sedonadb/latest/
+- GeoPandas Developers. (2026). *GeoPandas Documentation*. https://geopandas.org/en/stable/
