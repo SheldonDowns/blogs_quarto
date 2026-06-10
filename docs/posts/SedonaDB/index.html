@@ -22,6 +22,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -158,12 +192,22 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="introduction" class="level2">
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
-<p>SedonaDB is a new database management tool specially designed for handling large scale spatial data. This is something that I have been learning about recently and I am very excited since other tools or packages designed for spaical data strugle to handle large scale spatial data. I have been using GeoPandas for a while now and I am pretty familiar with it, but I was excited to hear that there was a new spatial data tool on the rise since I’m not the biggest fan of Pandas. In this post, I will be comparing SedonaDB with GeoPandas to see what they have to offer and how they compare to each other. I will be looking at the features, performance, and ease of use of both tools to see which one is better suited for different types of spatial data analysis tasks.</p>
+<p>SedonaDB is a new tool specially designed for handling large scale spatial data. This is something that I have been learning about recently and I am very excited since other tools or packages designed for spatial data struggle to handle large scale spatial data. I have been using GeoPandas for a while now and I am pretty familiar with it, but I was excited to hear that there was a new spatial data tool on the rise since I’m not the biggest fan of Pandas or GeoPandas.</p>
+<p>In this post, I will be comparing SedonaDB with GeoPandas to see what they have to offer and how they compare to each other. I will be looking at the features, performance, and ease of use of both tools to see which one is better suited for different types of spatial data analysis tasks.</p>
 </section>
 <section id="what-are-they" class="level2">
 <h2 class="anchored" data-anchor-id="what-are-they">What are they?</h2>
 <p><strong>GeoPandas</strong> is a Python library that extends the Pandas data management library to support spatial data. It allows you to work with geospatial data in a familiar DataFrame format, and supports reading and writing of common spatial file formats like Shapefiles, GeoJSON, and GeoPackage. GeoPandas runs entirely in memory on a single machine, which makes it simple to use but limits how much data it can handle.</p>
-<p><strong>SedonaDB</strong> is a spatial database engine built on top of Apache Sedona. Unlike GeoPandas it is designed from the ground up for large scale distributed spatial data. It uses a SQL interface with built-in spatial functions like <code>ST_Distance</code>, <code>ST_Within</code>, and <code>ST_Transform</code>, making it feel familiar to anyone who has used any other spatial database. SedonaDB runs as an in-process engine, meaning you can connect to it directly from Python without needing to set up a server.</p>
+<p><strong>SedonaDB</strong> is a spatial computation engine built on top of Apache Sedona. It is worth clarifying that SedonaDB is not just a database it can host and query data locally without needing to set up a server at all. You simply connect to it from Python and start querying straight away:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sedona.db</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>sd <span class="op">=</span> sedona.db.<span class="ex">connect</span>()</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>sdf <span class="op">=</span> sd.create_data_frame(df)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>sdf.to_view(<span class="st">"raw_data"</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>sd.sql(<span class="st">"SELECT * FROM raw_data LIMIT 5"</span>).show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Unlike GeoPandas, SedonaDB is designed from the ground up for large scale spatial data. It uses a SQL interface with built-in spatial functions like <code>ST_Distance</code>, <code>ST_Within</code>, and <code>ST_Transform</code>, making it an easy pickup for anyone already comfortable with SQL. SedonaDB runs as an in-process engine, meaning there is no server to configure or maintain it lives right alongside your Python code.</p>
 </section>
 <section id="feature-comparison" class="level2">
 <h2 class="anchored" data-anchor-id="feature-comparison">Feature Comparison</h2>
@@ -265,11 +309,15 @@ ul.task-list li input[type="checkbox"] {
 <section id="when-to-use-which" class="level2">
 <h2 class="anchored" data-anchor-id="when-to-use-which">When to use which?</h2>
 <p>The choice between GeoPandas and SedonaDB really comes down to the size of your data and the complexity of your spatial queries. For small to medium datasets where you want quick results and easy visualization, GeoPandas is probably the way to go. But when your data grows beyond what fits comfortably in memory, or when you need to run complex spatial joins and aggregations, SedonaDB becomes the better choice.</p>
-<p>In my own project analyzing NYC traffic data for spatial interpolation using Kriging, I found that using both tools together worked best. I used SedonaDB to store and query the raw spatial data, compute sensor pair distances, and build empirical variograms tasks that involved millions of point pairs. I then exported the results to GeoPandas and pandas for model fitting and visualization. This hybrid approach let me take advantage of the strengths of both tools while avoiding their weaknesses.</p>
+<p>In my own project analyzing NYC traffic data for spatial interpolation using Kriging, I found that using both tools together worked best. I used SedonaDB to store and query the raw spatial data, compute sensor pair distances, and build empirical variograms tasks that involved millions of point pairs. I then exported the results to pandas for model fitting and visualization. This hybrid approach let me take advantage of the strengths of both tools while avoiding their weaknesses.</p>
 </section>
 <section id="conclusion" class="level2">
 <h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
-<p>SedonaDB and GeoPandas are not really competitors they are complementary tools that solve different problems. GeoPandas is the go to for quick exploratory spatial analysis and visualization on datasets . SedonaDB is the better choice when scale, SQL expressiveness, and performance matter. As spatial datasets continue to grow in size and complexity, tools like SedonaDB will become increasingly important, but GeoPandas will remain a staple of the Python geospatial ecosystem for a long time to come.</p>
+<p>SedonaDB and GeoPandas are not really competitors they are complementary tools that solve different problems. GeoPandas is the go to for quick exploratory spatial analysis and visualization on datasets that fit in memory. SedonaDB is the better choice when scale, SQL expressiveness, and performance matter. As spatial datasets continue to grow in size and complexity, tools like SedonaDB will become increasingly important, but GeoPandas will remain a staple of the Python geospatial ecosystem for a long time to come.</p>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+<p>SedonaDB Image: https://sedona.apache.org/sedonadb/latest/</p>
 
 
 </section>
