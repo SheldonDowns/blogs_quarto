@@ -1,0 +1,136 @@
+---
+title: "Moran's I: Is NYC Traffic Spatially Correlated?"
+author: "Sheldon Downs"
+date: "2026-07-14"
+categories: [code, analysis, spatial statistics]
+image: "morans_i_local.png"
+---
+
+## What is Moran's I?
+
+Before you can use Kriging to predict values at unmeasured locations, you need to 
+verify that the data actually has spatial structure which means that nearby locations tend 
+to have similar values. If traffic volume at one sensor had no relationship to the 
+sensors around it, Kriging would be meaningless.
+
+This is where Moran's I comes in. It is a single number between -1 and 1 that 
+summarizes how spatially autocorrelated your data is:
+
+- **Close to +1** — nearby locations have similar values (positive autocorrelation)
+- **Close to 0** — no spatial pattern, values are randomly distributed
+- **Close to -1** — nearby locations have opposite values (negative autocorrelation)
+
+For Kriging to be valid you need a positive Moran's I, confirming that the data 
+has spatial structure worth interpolating.
+
+## Computing Moran's I in SedonaDB
+
+In my project I computed Moran's I directly from the sensor pair table I had 
+already built in SedonaDB. The key insight is that Moran's I should use 
+**inverse distance weights** which means that closer sensor pairs get more influence than 
+distant ones. I also restricted the computation to local neighbours within 2km, 
+since including all pairs across the entire city dilutes the spatial signal.
+
+```python
+morans_local = sd.sql("""
+    SELECT
+        time_period,
+        COUNT(*) AS n_pairs,
+        AVG(vol_i) AS mean_vol,
+        SUM((1.0/distance) * (vol_i - avg_vol) * (vol_j - avg_vol)) /
+        (SUM(1.0/distance) * SUM((vol_i - avg_vol) * 
+        (vol_i - avg_vol)) / COUNT(*)) AS morans_i
+    FROM (
+        SELECT *,
+            AVG(vol_i) OVER (PARTITION BY time_period) AS avg_vol
+        FROM sensor_pairs
+        WHERE distance > 0
+          AND distance < 0.02
+    )
+    GROUP BY time_period
+""").to_pandas()
+```
+
+One thing that tripped me up early on was computing Moran's I across all sensor 
+pairs regardless of distance. The values came back at around 0.005 — essentially 
+zero — which was alarming. The fix was restricting to local neighbours only, which 
+brought the values up to a much more meaningful range.
+
+## Results
+
+```{python}
+#| echo: false
+import matplotlib.pyplot as plt
+import pandas as pd
+
+morans_data = pd.DataFrame({
+    "time_period": ["PM_peak", "off_peak", "AM_peak"],
+    "morans_i": [0.4465, 0.3656, 0.4006]
+})
+
+fig, ax = plt.subplots(figsize=(7, 4))
+colors = ["steelblue"] * 3
+bars = ax.bar(morans_data["time_period"], morans_data["morans_i"], color=colors)
+ax.set_ylim(0, 0.6)
+ax.set_title("Moran's I by Time Period (Local Neighbours < 2km)")
+ax.set_ylabel("Moran's I")
+ax.set_xlabel("Time Period")
+ax.grid(True, alpha=0.3)
+
+for bar, val in zip(bars, morans_data["morans_i"]):
+    ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.01,
+            f"{val:.4f}", ha="center", fontsize=10)
+
+plt.tight_layout()
+plt.show()
+```
+
+| Time Period | Moran's I | Pairs |
+|---|---|---|
+| PM Peak | 0.447 | 104,370 |
+| AM Peak | 0.401 | 145,626 |
+| Off Peak | 0.366 | 159,641 |
+
+All three time periods show **moderate positive spatial autocorrelation**, 
+confirming that nearby traffic sensors do tend to have similar values. This 
+is the green light Kriging needs to proceed.
+
+## What the Results Tell Us
+
+A few things stand out from these numbers.
+
+First, peak hours have stronger autocorrelation than off-peak. This makes 
+intuitive sense — during rush hour, traffic conditions tend to ripple across 
+the city in a more coherent pattern. An accident or bottleneck on one block 
+affects the blocks around it. Off-peak traffic is more random and localized, 
+so the spatial signal is weaker.
+
+Second, values around 0.4 are considered moderate rather than strong 
+autocorrelation. This is typical for urban traffic data, where road type 
+(highway vs local street) introduces a lot of local variation that has nothing 
+to do with geography. A highway sensor sitting next to a local street sensor 
+will have very different volumes even though they are physically close, which 
+naturally pulls Moran's I down.
+
+Third, and most importantly — the values are positive and meaningful enough 
+to justify Kriging. The data has spatial structure. Nearby sensors are more 
+similar than distant ones. The prerequisite is satisfied.
+
+## Limitations
+
+Moran's I gives a single global summary of spatial autocorrelation across the 
+entire study area. In reality, spatial autocorrelation likely varies across 
+different parts of NYC — it might be stronger in Manhattan where the street 
+grid is dense and uniform, and weaker in Staten Island where roads are more 
+dispersed. A local version of Moran's I (called LISA — Local Indicators of 
+Spatial Association) would capture this variation and is something I would 
+explore in future work.
+
+## Conclusion
+
+Moran's I was an essential first step in validating the Kriging approach for 
+this project. Without it, there would be no guarantee that the spatial 
+interpolation was doing anything meaningful. The values of 0.37 to 0.45 
+across all three time periods gave me the confidence to move forward with 
+variogram fitting and Universal Kriging, knowing that the data had the 
+spatial structure needed to make the predictions trustworthy.

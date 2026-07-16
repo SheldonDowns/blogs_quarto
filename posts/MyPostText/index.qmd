@@ -1,9 +1,0 @@
----
-title: "Test Post"
-author: "Sheldon Downs"
-date: "2026-05-27"
-categories: [news, code, analysis]
-image: "Convers.png"
----
-
-This is a test post for my blog with a Conver.
