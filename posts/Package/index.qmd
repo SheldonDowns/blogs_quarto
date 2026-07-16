@@ -39,9 +39,23 @@ making the pipeline scale to large datasets without a full Spark cluster.
 Ordinary vs Universal Kriging is selected automatically based on a stationarity 
 test — no manual decision required.
 
+## Limitations & Future Work
+
+The current version only supports fetching from **Socrata open data portals**. 
+Adding support for REST APIs and CSV downloads would open the package up to a 
+much wider range of datasets.
+
+Cross validation is currently **random k-fold holdout**. Spatial cross 
+validation — where held-out points are physically separated from training 
+points — would give a more honest picture of prediction accuracy.
+
+Looking ahead, supporting **time series Kriging** would be the most impactful 
+addition, allowing the package to predict how values change over time across 
+space rather than just producing a single static surface.
+
 ## Try It
 
-If your city publishes point sensor data through a Socrata open data portal, 
+If your city publishes point sensor data through a Socrata open data portal 
 you can run the full pipeline with minimal setup.
 
 Full source code and documentation:

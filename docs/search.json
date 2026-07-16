@@ -154,11 +154,18 @@
     "text": "Key Design Decisions\nThe spatial heavy lifting is pushed into SedonaDB rather than GeoPandas, making the pipeline scale to large datasets without a full Spark cluster.\nOrdinary vs Universal Kriging is selected automatically based on a stationarity test — no manual decision required."
   },
   {
+    "objectID": "posts/Package/index.html#limitations-future-work",
+    "href": "posts/Package/index.html#limitations-future-work",
+    "title": "Building geokrige: A Python Package for Spatial Interpolation",
+    "section": "Limitations & Future Work",
+    "text": "Limitations & Future Work\nThe current version only supports fetching from Socrata open data portals. Adding support for REST APIs and CSV downloads would open the package up to a much wider range of datasets.\nCross validation is currently random k-fold holdout. Spatial cross validation — where held-out points are physically separated from training points — would give a more honest picture of prediction accuracy.\nLooking ahead, supporting time series Kriging would be the most impactful addition, allowing the package to predict how values change over time across space rather than just producing a single static surface."
+  },
+  {
     "objectID": "posts/Package/index.html#try-it",
     "href": "posts/Package/index.html#try-it",
     "title": "Building geokrige: A Python Package for Spatial Interpolation",
     "section": "Try It",
-    "text": "Try It\nIf your city publishes point sensor data through a Socrata open data portal, you can run the full pipeline with minimal setup.\nFull source code and documentation:\ngithub.com/SheldonDowns/geokrige"
+    "text": "Try It\nIf your city publishes point sensor data through a Socrata open data portal you can run the full pipeline with minimal setup.\nFull source code and documentation:\ngithub.com/SheldonDowns/geokrige"
   },
   {
     "objectID": "posts/SedonaDB/index.html",

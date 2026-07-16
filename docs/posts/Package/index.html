@@ -208,9 +208,15 @@ ul.task-list li input[type="checkbox"] {
 <p>The spatial heavy lifting is pushed into <strong>SedonaDB</strong> rather than GeoPandas, making the pipeline scale to large datasets without a full Spark cluster.</p>
 <p>Ordinary vs Universal Kriging is selected automatically based on a stationarity test — no manual decision required.</p>
 </section>
+<section id="limitations-future-work" class="level2">
+<h2 class="anchored" data-anchor-id="limitations-future-work">Limitations &amp; Future Work</h2>
+<p>The current version only supports fetching from <strong>Socrata open data portals</strong>. Adding support for REST APIs and CSV downloads would open the package up to a much wider range of datasets.</p>
+<p>Cross validation is currently <strong>random k-fold holdout</strong>. Spatial cross validation — where held-out points are physically separated from training points — would give a more honest picture of prediction accuracy.</p>
+<p>Looking ahead, supporting <strong>time series Kriging</strong> would be the most impactful addition, allowing the package to predict how values change over time across space rather than just producing a single static surface.</p>
+</section>
 <section id="try-it" class="level2">
 <h2 class="anchored" data-anchor-id="try-it">Try It</h2>
-<p>If your city publishes point sensor data through a Socrata open data portal, you can run the full pipeline with minimal setup.</p>
+<p>If your city publishes point sensor data through a Socrata open data portal you can run the full pipeline with minimal setup.</p>
 <p>Full source code and documentation:</p>
 <p><a href="https://github.com/SheldonDowns/geokrige">github.com/SheldonDowns/geokrige</a></p>
 
