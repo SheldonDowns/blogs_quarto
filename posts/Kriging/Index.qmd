@@ -3,7 +3,7 @@ title: "Ordinary vs Universal Kriging: Why Stationarity Matters"
 author: "Sheldon Downs"
 date: "2026-07-10"
 categories: [analysis, spatial statistics]
-image: "stationarity.png"
+image: "image_80a04ccc.png"
 ---
 
 ## What is Kriging?
