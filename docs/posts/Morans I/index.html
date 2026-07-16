@@ -7,9 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Sheldon Downs">
-<meta name="dcterms.date" content="2026-06-10">
+<meta name="dcterms.date" content="2026-07-10">
 
-<title>Sheldon Downs Blog - SedonaDB vs GeoPandas: A Spatial Data Showdown</title>
+<title>Sheldon Downs Blog - Moran’s I: Is NYC Traffic Spatially Correlated?</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -21,40 +21,6 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
-}
-/* CSS for syntax highlighting */
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -149,7 +115,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">SedonaDB vs GeoPandas: A Spatial Data Showdown</h1>
+      <h1 class="title">Moran’s I: Is NYC Traffic Spatially Correlated?</h1>
                                 <div class="quarto-categories">
                 <div class="quarto-category">code</div>
                 <div class="quarto-category">analysis</div>
@@ -171,7 +137,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">June 10, 2026</p>
+        <p class="date">July 10, 2026</p>
       </div>
     </div>
     
@@ -190,138 +156,72 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<section id="introduction" class="level2">
-<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
-<p>SedonaDB is a new tool specially designed for handling large scale spatial data. This is something that I have been learning about recently and I am very excited since other tools or packages designed for spatial data struggle to handle large scale spatial data. I have been using GeoPandas for a while now and I am pretty familiar with it, but I was excited to hear that there was a new spatial data tool on the rise since I’m not the biggest fan of Pandas or GeoPandas.</p>
-<p>In this post, I will be comparing SedonaDB with GeoPandas to see what they have to offer and how they compare to each other. I will be looking at the features, performance, and ease of use of both tools to see which one is better suited for different types of spatial data analysis tasks.</p>
+<section id="what-is-morans-i" class="level2">
+<h2 class="anchored" data-anchor-id="what-is-morans-i">What is Moran’s I?</h2>
+<p>Before you can use Kriging to predict values at unmeasured locations, you need to verify that the data actually has spatial structure which means that nearby locations tend to have similar values. If traffic volume at one sensor had no relationship to the sensors around it, Kriging would be meaningless.</p>
+<p>This is where Moran’s I comes in. It is a single number between -1 and 1 that summarizes how spatially autocorrelated your data is:</p>
+<ul>
+<li><strong>Close to +1</strong> — nearby locations have similar values (positive autocorrelation)</li>
+<li><strong>Close to 0</strong> — no spatial pattern, values are randomly distributed</li>
+<li><strong>Close to -1</strong> — nearby locations have opposite values (negative autocorrelation)</li>
+</ul>
+<p>For Kriging to be valid you need a positive Moran’s I, confirming that the data has spatial structure worth interpolating.</p>
 </section>
-<section id="what-are-they" class="level2">
-<h2 class="anchored" data-anchor-id="what-are-they">What are they?</h2>
-<p><strong>GeoPandas</strong> is a Python library that extends the Pandas data management library to support spatial data. It allows you to work with geospatial data in a familiar DataFrame format, and supports reading and writing of common spatial file formats like Shapefiles, GeoJSON, and GeoPackage. GeoPandas runs entirely in memory on a single machine, which makes it simple to use but limits how much data it can handle.</p>
-<p><strong>SedonaDB</strong> is a spatial computation engine built on top of Apache Sedona. It is worth clarifying that SedonaDB is not just a database it can host and query data locally without needing to set up a server at all. You simply connect to it from Python and start querying straight away:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sedona.db</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>sd <span class="op">=</span> sedona.db.<span class="ex">connect</span>()</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>sdf <span class="op">=</span> sd.create_data_frame(df)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>sdf.to_view(<span class="st">"raw_data"</span>)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>sd.sql(<span class="st">"SELECT * FROM raw_data LIMIT 5"</span>).show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>Unlike GeoPandas, SedonaDB is designed from the ground up for large scale spatial data. It uses a SQL interface with built-in spatial functions like <code>ST_Distance</code>, <code>ST_Within</code>, and <code>ST_Transform</code>, making it an easy pickup for anyone already comfortable with SQL. SedonaDB runs as an in-process engine, meaning there is no server to configure or maintain it lives right alongside your Python code.</p>
+<section id="computing-morans-i-in-sedonadb" class="level2">
+<h2 class="anchored" data-anchor-id="computing-morans-i-in-sedonadb">Computing Moran’s I in SedonaDB</h2>
+<p>In my project I computed Moran’s I directly from the sensor pair table I had already built in SedonaDB. The key insight is that Moran’s I should use <strong>inverse distance weights</strong> which means that closer sensor pairs get more influence than distant ones. I also restricted the computation to local neighbours within 2km, since including all pairs across the entire city dilutes the spatial signal.</p>
+<p>One thing that tripped me up early on was computing Moran’s I across all sensor pairs regardless of distance. The values came back at around 0.005 — essentially zero — which was alarming. The fix was restricting to local neighbours only, which brought the values up to a much more meaningful range.</p>
 </section>
-<section id="feature-comparison" class="level2">
-<h2 class="anchored" data-anchor-id="feature-comparison">Feature Comparison</h2>
+<section id="results" class="level2">
+<h2 class="anchored" data-anchor-id="results">Results</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="morans_i_local.png" class="img-fluid figure-img"></p>
+<figcaption>Moran’s I by Time Period</figcaption>
+</figure>
+</div>
 <table class="table">
-<colgroup>
-<col style="width: 33%">
-<col style="width: 33%">
-<col style="width: 33%">
-</colgroup>
 <thead>
 <tr class="header">
-<th>Feature</th>
-<th>GeoPandas</th>
-<th>SedonaDB</th>
+<th>Time Period</th>
+<th>Moran’s I</th>
+<th>Pairs</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>Interface</td>
-<td>Python API</td>
-<td>SQL</td>
+<td>PM Peak</td>
+<td>0.447</td>
+<td>104,370</td>
 </tr>
 <tr class="even">
-<td>Scale</td>
-<td>Single machine, in-memory</td>
-<td>Large scale, distributed</td>
+<td>AM Peak</td>
+<td>0.401</td>
+<td>145,626</td>
 </tr>
 <tr class="odd">
-<td>Spatial joins</td>
-<td>Yes</td>
-<td>Yes</td>
-</tr>
-<tr class="even">
-<td>CRS reprojection</td>
-<td>Yes (via pyproj)</td>
-<td>Yes (via ST_Transform)</td>
-</tr>
-<tr class="odd">
-<td>File formats</td>
-<td>Shapefile, GeoJSON, GeoPackage</td>
-<td>Parquet, GeoArrow, Delta Lake</td>
-</tr>
-<tr class="even">
-<td>Visualization</td>
-<td>Yes</td>
-<td>No (export needed)</td>
-</tr>
-<tr class="odd">
-<td>Learning curve</td>
-<td>Low</td>
-<td>Medium</td>
-</tr>
-<tr class="even">
-<td>Setup complexity</td>
-<td>pip install geopandas</td>
-<td>pip install apache-sedona[db]</td>
+<td>Off Peak</td>
+<td>0.366</td>
+<td>159,641</td>
 </tr>
 </tbody>
 </table>
+<p>All three time periods show <strong>moderate positive spatial autocorrelation</strong>, confirming that nearby traffic sensors do tend to have similar values. This is the green light Kriging needs to proceed.</p>
 </section>
-<section id="strengths-and-weaknesses" class="level2">
-<h2 class="anchored" data-anchor-id="strengths-and-weaknesses">Strengths and Weaknesses</h2>
-<section id="geopandas" class="level3">
-<h3 class="anchored" data-anchor-id="geopandas">GeoPandas</h3>
-<p><strong>Strengths:</strong></p>
-<ul>
-<li>Very easy to get started with, especially if you are already familiar with Pandas</li>
-<li>Excellent visualization support</li>
-<li>Large community and extensive documentation</li>
-<li>Works well for small to medium datasets that fit in memory</li>
-<li>Integrates seamlessly with the rest of the Python data science ecosystem (NumPy, Scikit-learn, etc.)</li>
-</ul>
-<p><strong>Weaknesses:</strong></p>
-<ul>
-<li>Struggles with large datasets since everything must fit in memory</li>
-<li>Have to use Pandas syntax</li>
-<li>Not well suited for complex spatial queries that would be natural in SQL</li>
-</ul>
+<section id="what-the-results-tell-us" class="level2">
+<h2 class="anchored" data-anchor-id="what-the-results-tell-us">What the Results Tell Us</h2>
+<p>A few things stand out from these numbers.</p>
+<p>First, peak hours have stronger autocorrelation than off-peak. This makes intuitive sense since during rush hour, traffic conditions tend to ripple across the city in a more coherent pattern. An accident or bottleneck on one block affects the blocks around it. Off-peak traffic is more random and localized, so the spatial signal is weaker.</p>
+<p>Second, values around 0.4 are considered moderate rather than strong autocorrelation. This is typical for urban traffic data, where road type (highway vs local street) introduces a lot of local variation that has nothing to do with geography. A highway sensor sitting next to a local street sensor will have very different volumes even though they are physically close, which naturally pulls Moran’s I down.</p>
+<p>Third, and most importantly, the values are positive and meaningful enough to justify Kriging. The data has spatial structure. Nearby sensors are more similar than distant ones. The prerequisite is satisfied.</p>
 </section>
-<section id="sedonadb" class="level3">
-<h3 class="anchored" data-anchor-id="sedonadb">SedonaDB</h3>
-<p><strong>Strengths:</strong></p>
-<ul>
-<li>Designed for large scale spatial data that would crash GeoPandas</li>
-<li>SQL interface makes complex spatial queries clean and readable</li>
-<li>Built in support for modern columnar formats like Parquet and GeoArrow</li>
-<li>Spatial joins and distance computations are highly optimized</li>
-<li>Can interoperate with GeoPandas via <code>to_pandas()</code> and <code>create_data_frame()</code></li>
-</ul>
-<p><strong>Weaknesses:</strong></p>
-<ul>
-<li>Newer tool with a smaller community and less documentation</li>
-<li>No built in visualization — you have to export to GeoPandas to plot</li>
-<li>SQL only interface can feel limiting for users who prefer a Python API</li>
-<li>Still maturing, so some features and error messages are rough around the edges</li>
-</ul>
-</section>
-</section>
-<section id="when-to-use-which" class="level2">
-<h2 class="anchored" data-anchor-id="when-to-use-which">When to use which?</h2>
-<p>The choice between GeoPandas and SedonaDB really comes down to the size of your data and the complexity of your spatial queries. For small to medium datasets where you want quick results and easy visualization, GeoPandas is probably the way to go. But when your data grows beyond what fits comfortably in memory, or when you need to run complex spatial joins and aggregations, SedonaDB becomes the better choice.</p>
-<p>In my own project analyzing NYC traffic data for spatial interpolation using Kriging, I found that using both tools together worked best. I used SedonaDB to store and query the raw spatial data, compute sensor pair distances, and build empirical variograms tasks that involved millions of point pairs. I then exported the results to pandas for model fitting and visualization. This hybrid approach let me take advantage of the strengths of both tools while avoiding their weaknesses.</p>
+<section id="limitations" class="level2">
+<h2 class="anchored" data-anchor-id="limitations">Limitations</h2>
+<p>Moran’s I gives a single global summary of spatial autocorrelation across the entire study area. In reality, spatial autocorrelation likely varies across different parts of NYC — it might be stronger in Manhattan where the street grid is dense and uniform, and weaker in Staten Island where roads are more dispersed. A local version of Moran’s I called LISA (Local Indicators of Spatial Association) would capture this variation and is something I would explore in future work.</p>
 </section>
 <section id="conclusion" class="level2">
 <h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
-<p>SedonaDB and GeoPandas are not really competitors they are complementary tools that solve different problems. GeoPandas is the go to for quick exploratory spatial analysis and visualization on datasets that fit in memory. SedonaDB is the better choice when scale, SQL expressiveness, and performance matter. As spatial datasets continue to grow in size and complexity, tools like SedonaDB will become increasingly important, but GeoPandas will remain a staple of the Python geospatial ecosystem for a long time to come.</p>
-</section>
-<section id="references" class="level2">
-<h2 class="anchored" data-anchor-id="references">References</h2>
-<ul>
-<li>SedonaDB Image: https://sedona.apache.org/sedonadb/latest/</li>
-<li>Apache Sedona. (2026). <em>SedonaDB Documentation</em>. https://sedona.apache.org/sedonadb/latest/</li>
-<li>GeoPandas Developers. (2026). <em>GeoPandas Documentation</em>. https://geopandas.org/en/stable/</li>
-</ul>
+<p>Moran’s I was an essential first step in validating the Kriging approach for this project. Without it, there would be no guarantee that the spatial interpolation was doing anything meaningful. The values of 0.37 to 0.45 across all three time periods gave me the confidence to move forward with variogram fitting and Universal Kriging, knowing that the data had the spatial structure needed to make the predictions trustworthy.</p>
 
 
 </section>
