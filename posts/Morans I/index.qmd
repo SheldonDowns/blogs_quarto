@@ -3,7 +3,7 @@ title: "Moran's I: Is NYC Traffic Spatially Correlated?"
 author: "Sheldon Downs"
 date: "2026-07-10"
 categories: [code, analysis, tools]
-image: "morans_i_local.png"
+image: "image_a13e4c2.png"
 ---
 
 ## What is Moran's I?

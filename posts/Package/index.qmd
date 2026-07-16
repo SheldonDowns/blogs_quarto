@@ -1,0 +1,49 @@
+---
+title: "Building geokrige: A Python Package for Spatial Interpolation"
+author: "Sheldon Downs"
+date: "2026-07-10"
+categories: [code, tools, spatial statistics]
+image: "geokrige_hex_sticker (1).png"
+---
+
+## Why I Built It
+
+While working on my NYC traffic spatial interpolation project I wanted a way to 
+streamline the full Kriging pipeline into something clean and reusable. Rather 
+than having every step scattered across a notebook, I wanted a single workflow 
+that could be applied to any city or any type of spatial point data with minimal 
+changes.
+
+So I built **geokrige**. It was developed using NYC traffic data but is designed 
+to work with any dataset where you have a location and a numeric value — air 
+quality monitors, weather stations, real estate prices, soil samples, and more.
+
+## What It Does
+
+`fetch → aggregate → Moran's I → variogram fit → Kriging → cross-validate → export`
+
+| Module | Purpose |
+|---|---|
+| `socrata.py` | Pull data from any Socrata open data API |
+| `data.py` | Load, aggregate, build sensor pairs, test stationarity |
+| `autocorrelation.py` | Compute Moran's I |
+| `variogram.py` | Fit empirical variogram — spherical, exponential, or gaussian |
+| `kriging.py` | Auto-select Ordinary vs Universal Kriging, predict, cross-validate |
+| `export.py` | Export to Folium heatmap, GeoTIFF, or shapefile |
+
+## Key Design Decisions
+
+The spatial heavy lifting is pushed into **SedonaDB** rather than GeoPandas, 
+making the pipeline scale to large datasets without a full Spark cluster.
+
+Ordinary vs Universal Kriging is selected automatically based on a stationarity 
+test — no manual decision required.
+
+## Try It
+
+If your city publishes point sensor data through a Socrata open data portal, 
+you can run the full pipeline with minimal setup.
+
+Full source code and documentation:
+
+[github.com/SheldonDowns/geokrige](https://github.com/SheldonDowns/geokrige)
