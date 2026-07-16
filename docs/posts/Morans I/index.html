@@ -6,8 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Sheldon Downs">
+<meta name="dcterms.date" content="2026-06-10">
 
-<title>Sheldon Downs Blog</title>
+<title>Sheldon Downs Blog - SedonaDB vs GeoPandas: A Spatial Data Showdown</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,27 +22,59 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-listing/list.min.js"></script>
-<script src="site_libs/quarto-listing/quarto-listing.js"></script>
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -68,77 +102,19 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script>
 
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
 
-    const options = {
-      valueNames: ['listing-date','listing-title','listing-author','listing-image','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
-      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description","listing-categories"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
-
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
-
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="../../styles.css">
 </head>
 
-<body class="nav-fixed">
+<body class="nav-fixed fullcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../../index.html">
     <span class="navbar-title">Sheldon Downs Blog</span>
     </a>
   </div>
@@ -149,7 +125,7 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./about.html"> 
+    <a class="nav-link" href="../../about.html"> 
 <span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item compact">
@@ -172,194 +148,185 @@ window.Quarto = {
 <!-- content -->
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page-left">
-      <h1 class="title">Sheldon Downs Blog</h1>
-                      </div>
+    <div class="quarto-title column-body">
+      <h1 class="title">SedonaDB vs GeoPandas: A Spatial Data Showdown</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">code</div>
+                <div class="quarto-category">analysis</div>
+                <div class="quarto-category">tools</div>
+              </div>
+                  </div>
   </div>
     
   
-  <div class="quarto-title-meta column-page-left">
+  <div class="quarto-title-meta">
 
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Sheldon Downs </p>
+            </div>
+    </div>
       
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">June 10, 2026</p>
+      </div>
+    </div>
     
       
     </div>
     
   
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(4)</span></div><div class="category" data-category="analysis">analysis <span class="quarto-category-count">(3)</span></div><div class="category" data-category="code">code <span class="quarto-category-count">(3)</span></div><div class="category" data-category="news">news <span class="quarto-category-count">(2)</span></div><div class="category" data-category="tools">tools <span class="quarto-category-count">(2)</span></div></div></div>
+    
 <!-- main -->
-<main class="content quarto-banner-title-block column-page-left" id="quarto-document-content">
+<main class="content quarto-banner-title-block" id="quarto-document-content">
 
 
 
 
 
+<section id="introduction" class="level2">
+<h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
+<p>SedonaDB is a new tool specially designed for handling large scale spatial data. This is something that I have been learning about recently and I am very excited since other tools or packages designed for spatial data struggle to handle large scale spatial data. I have been using GeoPandas for a while now and I am pretty familiar with it, but I was excited to hear that there was a new spatial data tool on the rise since I’m not the biggest fan of Pandas or GeoPandas.</p>
+<p>In this post, I will be comparing SedonaDB with GeoPandas to see what they have to offer and how they compare to each other. I will be looking at the features, performance, and ease of use of both tools to see which one is better suited for different types of spatial data analysis tasks.</p>
+</section>
+<section id="what-are-they" class="level2">
+<h2 class="anchored" data-anchor-id="what-are-they">What are they?</h2>
+<p><strong>GeoPandas</strong> is a Python library that extends the Pandas data management library to support spatial data. It allows you to work with geospatial data in a familiar DataFrame format, and supports reading and writing of common spatial file formats like Shapefiles, GeoJSON, and GeoPackage. GeoPandas runs entirely in memory on a single machine, which makes it simple to use but limits how much data it can handle.</p>
+<p><strong>SedonaDB</strong> is a spatial computation engine built on top of Apache Sedona. It is worth clarifying that SedonaDB is not just a database it can host and query data locally without needing to set up a server at all. You simply connect to it from Python and start querying straight away:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sedona.db</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>sd <span class="op">=</span> sedona.db.<span class="ex">connect</span>()</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>sdf <span class="op">=</span> sd.create_data_frame(df)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>sdf.to_view(<span class="st">"raw_data"</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>sd.sql(<span class="st">"SELECT * FROM raw_data LIMIT 5"</span>).show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Unlike GeoPandas, SedonaDB is designed from the ground up for large scale spatial data. It uses a SQL interface with built-in spatial functions like <code>ST_Distance</code>, <code>ST_Within</code>, and <code>ST_Transform</code>, making it an easy pickup for anyone already comfortable with SQL. SedonaDB runs as an in-process engine, meaning there is no server to configure or maintain it lives right alongside your Python code.</p>
+</section>
+<section id="feature-comparison" class="level2">
+<h2 class="anchored" data-anchor-id="feature-comparison">Feature Comparison</h2>
+<table class="table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Feature</th>
+<th>GeoPandas</th>
+<th>SedonaDB</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Interface</td>
+<td>Python API</td>
+<td>SQL</td>
+</tr>
+<tr class="even">
+<td>Scale</td>
+<td>Single machine, in-memory</td>
+<td>Large scale, distributed</td>
+</tr>
+<tr class="odd">
+<td>Spatial joins</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr class="even">
+<td>CRS reprojection</td>
+<td>Yes (via pyproj)</td>
+<td>Yes (via ST_Transform)</td>
+</tr>
+<tr class="odd">
+<td>File formats</td>
+<td>Shapefile, GeoJSON, GeoPackage</td>
+<td>Parquet, GeoArrow, Delta Lake</td>
+</tr>
+<tr class="even">
+<td>Visualization</td>
+<td>Yes</td>
+<td>No (export needed)</td>
+</tr>
+<tr class="odd">
+<td>Learning curve</td>
+<td>Low</td>
+<td>Medium</td>
+</tr>
+<tr class="even">
+<td>Setup complexity</td>
+<td>pip install geopandas</td>
+<td>pip install apache-sedona[db]</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="strengths-and-weaknesses" class="level2">
+<h2 class="anchored" data-anchor-id="strengths-and-weaknesses">Strengths and Weaknesses</h2>
+<section id="geopandas" class="level3">
+<h3 class="anchored" data-anchor-id="geopandas">GeoPandas</h3>
+<p><strong>Strengths:</strong></p>
+<ul>
+<li>Very easy to get started with, especially if you are already familiar with Pandas</li>
+<li>Excellent visualization support</li>
+<li>Large community and extensive documentation</li>
+<li>Works well for small to medium datasets that fit in memory</li>
+<li>Integrates seamlessly with the rest of the Python data science ecosystem (NumPy, Scikit-learn, etc.)</li>
+</ul>
+<p><strong>Weaknesses:</strong></p>
+<ul>
+<li>Struggles with large datasets since everything must fit in memory</li>
+<li>Have to use Pandas syntax</li>
+<li>Not well suited for complex spatial queries that would be natural in SQL</li>
+</ul>
+</section>
+<section id="sedonadb" class="level3">
+<h3 class="anchored" data-anchor-id="sedonadb">SedonaDB</h3>
+<p><strong>Strengths:</strong></p>
+<ul>
+<li>Designed for large scale spatial data that would crash GeoPandas</li>
+<li>SQL interface makes complex spatial queries clean and readable</li>
+<li>Built in support for modern columnar formats like Parquet and GeoArrow</li>
+<li>Spatial joins and distance computations are highly optimized</li>
+<li>Can interoperate with GeoPandas via <code>to_pandas()</code> and <code>create_data_frame()</code></li>
+</ul>
+<p><strong>Weaknesses:</strong></p>
+<ul>
+<li>Newer tool with a smaller community and less documentation</li>
+<li>No built in visualization — you have to export to GeoPandas to plot</li>
+<li>SQL only interface can feel limiting for users who prefer a Python API</li>
+<li>Still maturing, so some features and error messages are rough around the edges</li>
+</ul>
+</section>
+</section>
+<section id="when-to-use-which" class="level2">
+<h2 class="anchored" data-anchor-id="when-to-use-which">When to use which?</h2>
+<p>The choice between GeoPandas and SedonaDB really comes down to the size of your data and the complexity of your spatial queries. For small to medium datasets where you want quick results and easy visualization, GeoPandas is probably the way to go. But when your data grows beyond what fits comfortably in memory, or when you need to run complex spatial joins and aggregations, SedonaDB becomes the better choice.</p>
+<p>In my own project analyzing NYC traffic data for spatial interpolation using Kriging, I found that using both tools together worked best. I used SedonaDB to store and query the raw spatial data, compute sensor pair distances, and build empirical variograms tasks that involved millions of point pairs. I then exported the results to pandas for model fitting and visualization. This hybrid approach let me take advantage of the strengths of both tools while avoiding their weaknesses.</p>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>SedonaDB and GeoPandas are not really competitors they are complementary tools that solve different problems. GeoPandas is the go to for quick exploratory spatial analysis and visualization on datasets that fit in memory. SedonaDB is the better choice when scale, SQL expressiveness, and performance matter. As spatial datasets continue to grow in size and complexity, tools like SedonaDB will become increasingly important, but GeoPandas will remain a staple of the Python geospatial ecosystem for a long time to come.</p>
+</section>
+<section id="references" class="level2">
+<h2 class="anchored" data-anchor-id="references">References</h2>
+<ul>
+<li>SedonaDB Image: https://sedona.apache.org/sedonadb/latest/</li>
+<li>Apache Sedona. (2026). <em>SedonaDB Documentation</em>. https://sedona.apache.org/sedonadb/latest/</li>
+<li>GeoPandas Developers. (2026). <em>GeoPandas Documentation</em>. https://geopandas.org/en/stable/</li>
+</ul>
 
 
+</section>
 
-
-<div class="quarto-listing quarto-listing-container-default" id="listing-listing">
-<div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="code,analysis,tools" data-listing-date-sort="1781071200000" data-listing-file-modified-sort="1784161375122" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="829">
-<div class="thumbnail">
-<p><a href="./posts/Morans I/index.html" class="no-external"></a></p><a href="./posts/Morans I/index.html" class="no-external">
-<p><img src="./posts/Morans I/SedonaDB.png" class="thumbnail-image"></p>
-</a><p><a href="./posts/Morans I/index.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./posts/Morans I/index.html" class="no-external">SedonaDB vs GeoPandas: A Spatial Data Showdown</a>
-</h3>
-<div class="listing-subtitle">
-<a href="./posts/Morans I/index.html" class="no-external"></a>
-</div>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('code'); return false;">
-code
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('analysis'); return false;">
-analysis
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('tools'); return false;">
-tools
-</div>
-</div>
-<div class="listing-description">
-<a href="./posts/Morans I/index.html" class="no-external">SedonaDB is a new tool specially designed for handling large scale spatial data. This is something that I have been learning about recently and I am very excited since other…</a>
-</div>
-</div>
-<div class="metadata">
-<a href="./posts/Morans I/index.html" class="no-external">
-<div class="listing-date">
-Jun 10, 2026
-</div>
-<div class="listing-author">
-Sheldon Downs
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="1" data-categories="code,analysis,tools" data-listing-date-sort="1781071200000" data-listing-file-modified-sort="1781117929513" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="829">
-<div class="thumbnail">
-<p><a href="./posts/SedonaDB/index.html" class="no-external"></a></p><a href="./posts/SedonaDB/index.html" class="no-external">
-<p><img src="./posts/SedonaDB/SedonaDB.png" class="thumbnail-image"></p>
-</a><p><a href="./posts/SedonaDB/index.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./posts/SedonaDB/index.html" class="no-external">SedonaDB vs GeoPandas: A Spatial Data Showdown</a>
-</h3>
-<div class="listing-subtitle">
-<a href="./posts/SedonaDB/index.html" class="no-external"></a>
-</div>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('code'); return false;">
-code
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('analysis'); return false;">
-analysis
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('tools'); return false;">
-tools
-</div>
-</div>
-<div class="listing-description">
-<a href="./posts/SedonaDB/index.html" class="no-external">SedonaDB is a new tool specially designed for handling large scale spatial data. This is something that I have been learning about recently and I am very excited since other…</a>
-</div>
-</div>
-<div class="metadata">
-<a href="./posts/SedonaDB/index.html" class="no-external">
-<div class="listing-date">
-Jun 10, 2026
-</div>
-<div class="listing-author">
-Sheldon Downs
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="2" data-categories="news,code,analysis" data-listing-date-sort="1779861600000" data-listing-file-modified-sort="1779923861968" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="7">
-<div class="thumbnail">
-<p><a href="./posts/post-with-code/index.html" class="no-external"></a></p><a href="./posts/post-with-code/index.html" class="no-external">
-<p><img src="./posts/post-with-code/image.jpg" class="thumbnail-image"></p>
-</a><p><a href="./posts/post-with-code/index.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./posts/post-with-code/index.html" class="no-external">Post With Code</a>
-</h3>
-<div class="listing-subtitle">
-<a href="./posts/post-with-code/index.html" class="no-external"></a>
-</div>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('news'); return false;">
-news
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('code'); return false;">
-code
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('analysis'); return false;">
-analysis
-</div>
-</div>
-<div class="listing-description">
-<a href="./posts/post-with-code/index.html" class="no-external">This is a post with executable code.</a>
-</div>
-</div>
-<div class="metadata">
-<a href="./posts/post-with-code/index.html" class="no-external">
-<div class="listing-date">
-May 27, 2026
-</div>
-<div class="listing-author">
-Harlow Malloc
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="3" data-categories="news" data-listing-date-sort="1779602400000" data-listing-file-modified-sort="1779923861958" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="32">
-<div class="thumbnail">
-<p><a href="./posts/welcome/index.html" class="no-external"></a></p><a href="./posts/welcome/index.html" class="no-external">
-<p class="card-img-top"><img src="posts\welcome\thumbnail.jpg"  class="thumbnail-image card-img"/></p>
-</a><p><a href="./posts/welcome/index.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./posts/welcome/index.html" class="no-external">Welcome To My Blog</a>
-</h3>
-<div class="listing-subtitle">
-<a href="./posts/welcome/index.html" class="no-external"></a>
-</div>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('news'); return false;">
-news
-</div>
-</div>
-<div class="listing-description">
-<a href="./posts/welcome/index.html" class="no-external">This is the first post in a Quarto blog. Welcome!</a>
-</div>
-</div>
-<div class="metadata">
-<a href="./posts/welcome/index.html" class="no-external">
-<div class="listing-date">
-May 24, 2026
-</div>
-<div class="listing-author">
-Tristan O’Malley
-</div>
-</a>
-</div>
-</div>
-</div>
-<div class="listing-no-matching d-none">
-No matching items
-</div>
-</div></main> <!-- /main -->
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
