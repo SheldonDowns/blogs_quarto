@@ -32,7 +32,7 @@
     "href": "posts/Morans I/index.html#computing-morans-i-in-sedonadb",
     "title": "Moran’s I: Is NYC Traffic Spatially Correlated?",
     "section": "Computing Moran’s I in SedonaDB",
-    "text": "Computing Moran’s I in SedonaDB\nIn my project I computed Moran’s I directly from the sensor pair table I had already built in SedonaDB. The key insight is that Moran’s I should use inverse distance weights which means that closer sensor pairs get more influence than distant ones. I also restricted the computation to local neighbours within 2km, since including all pairs across the entire city dilutes the spatial signal.\nOne thing that tripped me up early on was computing Moran’s I across all sensor pairs regardless of distance. The values came back at around 0.005 — essentially zero — which was alarming. The fix was restricting to local neighbours only, which brought the values up to a much more meaningful range."
+    "text": "Computing Moran’s I in SedonaDB\nIn my project I computed Moran’s I directly from the sensor pair table I had already built in SedonaDB. The key insight is that Moran’s I should use inverse distance weights which means that closer sensor pairs get more influence than distant ones. I also restricted the computation to local neighbours within 2km, since including all pairs across the entire city dilutes the spatial signal.\nOne thing that tripped me up early on was computing Moran’s I across all sensor pairs regardless of distance. The values came back at around 0.005 which is essentially zero which was alarming. The fix was restricting to local neighbours only, which brought the values up to a much more meaningful range."
   },
   {
     "objectID": "posts/Morans I/index.html#results",
@@ -46,14 +46,14 @@
     "href": "posts/Morans I/index.html#what-the-results-tell-us",
     "title": "Moran’s I: Is NYC Traffic Spatially Correlated?",
     "section": "What the Results Tell Us",
-    "text": "What the Results Tell Us\nA few things stand out from these numbers.\nFirst, peak hours have stronger autocorrelation than off-peak. This makes intuitive sense since during rush hour, traffic conditions tend to ripple across the city in a more coherent pattern. An accident or bottleneck on one block affects the blocks around it. Off-peak traffic is more random and localized, so the spatial signal is weaker.\nSecond, values around 0.4 are considered moderate rather than strong autocorrelation. This is typical for urban traffic data, where road type (highway vs local street) introduces a lot of local variation that has nothing to do with geography. A highway sensor sitting next to a local street sensor will have very different volumes even though they are physically close, which naturally pulls Moran’s I down.\nThird, and most importantly, the values are positive and meaningful enough to justify Kriging. The data has spatial structure. Nearby sensors are more similar than distant ones. The prerequisite is satisfied."
+    "text": "What the Results Tell Us\nA few things stand out from these numbers.\nFirst, peak hours have stronger autocorrelation than off peak. This makes intuitive sense since during rush hour, traffic conditions tend to ripple across the city in a more coherent pattern. An accident or bottleneck on one block affects the blocks around it. Off peak traffic is more random and localized, so the spatial signal is weaker.\nSecond, values around 0.4 are considered moderate rather than strong autocorrelation. This is typical for urban traffic data, where road type (highway vs local street) introduces a lot of local variation that has nothing to do with geography. A highway sensor sitting next to a local street sensor will have very different volumes even though they are physically close, which naturally pulls Moran’s I down.\nThird, and most importantly, the values are positive and meaningful enough to justify Kriging. The data has spatial structure. Nearby sensors are more similar than distant ones. The prerequisite is satisfied."
   },
   {
     "objectID": "posts/Morans I/index.html#limitations",
     "href": "posts/Morans I/index.html#limitations",
     "title": "Moran’s I: Is NYC Traffic Spatially Correlated?",
     "section": "Limitations",
-    "text": "Limitations\nMoran’s I gives a single global summary of spatial autocorrelation across the entire study area. In reality, spatial autocorrelation likely varies across different parts of NYC — it might be stronger in Manhattan where the street grid is dense and uniform, and weaker in Staten Island where roads are more dispersed. A local version of Moran’s I called LISA (Local Indicators of Spatial Association) would capture this variation and is something I would explore in future work."
+    "text": "Limitations\nMoran’s I gives a single global summary of spatial autocorrelation across the entire study area. In reality, spatial autocorrelation likely varies across different parts of NYC and it might be stronger in Manhattan where the street grid is dense and uniform, and weaker in Staten Island where roads are more dispersed. A local version of Moran’s I called LISA (Local Indicators of Spatial Association) would capture this variation and is something I would explore in future work."
   },
   {
     "objectID": "posts/Morans I/index.html#conclusion",
@@ -95,7 +95,7 @@
     "href": "posts/Kriging/Index.html#ordinary-vs-universal-kriging",
     "title": "Ordinary vs Universal Kriging: Why Stationarity Matters",
     "section": "Ordinary vs Universal Kriging",
-    "text": "Ordinary vs Universal Kriging\nOrdinary Kriging assumes traffic volume has a roughly constant mean across the whole city. It just interpolates locally based on nearby sensors.\nUniversal Kriging accounts for a city-wide spatial trend in the data before interpolating. It is more complex but more accurate when the mean changes systematically across space.\nThe choice comes down to one question: is your data stationary?"
+    "text": "Ordinary vs Universal Kriging\nOrdinary Kriging assumes traffic volume has a roughly constant mean across the whole city. It just interpolates locally based on nearby sensors.\nUniversal Kriging accounts for an entire spatial trend in the data before interpolating. It is more complex but more accurate when the mean changes systematically across space.\nThe choice comes down to one question: is your data stationary?"
   },
   {
     "objectID": "posts/Kriging/Index.html#testing-for-stationarity",
@@ -109,7 +109,7 @@
     "href": "posts/Kriging/Index.html#results",
     "title": "Ordinary vs Universal Kriging: Why Stationarity Matters",
     "section": "Results",
-    "text": "Results\n\n\n\nTime Period\nH-Statistic\nResult\n\n\n\n\nAM Peak\n86.67\nNon-stationary\n\n\nPM Peak\n43.77\nNon-stationary\n\n\nOff Peak\n85.99\nNon-stationary\n\n\n\nTraffic volume drops systematically from northwest to southeast NYC. Manhattan and the Bronx have consistently higher volumes than the outer boroughs — denser roads, more commercial activity, more traffic. That is a spatial trend, not random noise, and Ordinary Kriging would have ignored it entirely."
+    "text": "Results\n\n\n\nTime Period\nH-Statistic\nResult\n\n\n\n\nAM Peak\n86.67\nNon-stationary\n\n\nPM Peak\n43.77\nNon-stationary\n\n\nOff Peak\n85.99\nNon-stationary\n\n\n\nTraffic volume drops systematically from northwest to southeast NYC. Manhattan and the Bronx have consistently higher volumes than the outer boroughs such as denser roads, more commercial activity, more traffic. That is a spatial trend, not random noise, and Ordinary Kriging would have ignored it entirely."
   },
   {
     "objectID": "posts/Kriging/Index.html#the-fix",
@@ -123,7 +123,7 @@
     "href": "posts/Kriging/Index.html#conclusion",
     "title": "Ordinary vs Universal Kriging: Why Stationarity Matters",
     "section": "Conclusion",
-    "text": "Conclusion\nTesting for stationarity before fitting a Kriging model is not optional — it determines which version of Kriging is valid for your data. The result surprised me but it made the final prediction surface more honest and more accurate."
+    "text": "Conclusion\nTesting for stationarity before fitting a Kriging model is not optional since it determines which version of Kriging is valid for your data. The result surprised me but it made the final prediction surface more honest and more accurate."
   },
   {
     "objectID": "posts/Package/index.html",
@@ -158,7 +158,7 @@
     "href": "posts/Package/index.html#limitations-future-work",
     "title": "Building geokrige: A Python Package for Spatial Interpolation",
     "section": "Limitations & Future Work",
-    "text": "Limitations & Future Work\nThe current version only supports fetching from Socrata open data portals. Adding support for REST APIs and CSV downloads would open the package up to a much wider range of datasets.\nCross validation is currently random k-fold holdout. Spatial cross validation — where held-out points are physically separated from training points — would give a more honest picture of prediction accuracy.\nLooking ahead, supporting time series Kriging would be the most impactful addition, allowing the package to predict how values change over time across space rather than just producing a single static surface."
+    "text": "Limitations & Future Work\nThe current version only supports fetching from Socrata open data portals. Adding support for REST APIs and CSV downloads would open the package up to a much wider range of datasets.\nCross validation is currently random k-fold holdout. Spatial cross validation where held-out points are physically separated from training points to give a more honest picture of prediction accuracy.\nLooking ahead, supporting time series Kriging would be the most impactful addition, allowing the package to predict how values change over time across space rather than just producing a single static surface."
   },
   {
     "objectID": "posts/Package/index.html#try-it",

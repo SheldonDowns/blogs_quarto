@@ -32,8 +32,8 @@ than distant ones. I also restricted the computation to local neighbours within 
 since including all pairs across the entire city dilutes the spatial signal.
 
 One thing that tripped me up early on was computing Moran's I across all sensor 
-pairs regardless of distance. The values came back at around 0.005 — essentially 
-zero — which was alarming. The fix was restricting to local neighbours only, which 
+pairs regardless of distance. The values came back at around 0.005 which is essentially 
+zero which was alarming. The fix was restricting to local neighbours only, which 
 brought the values up to a much more meaningful range.
 
 ## Results
@@ -52,10 +52,10 @@ is the green light Kriging needs to proceed.
 
 A few things stand out from these numbers.
 
-First, peak hours have stronger autocorrelation than off-peak. This makes 
+First, peak hours have stronger autocorrelation than off peak. This makes 
 intuitive sense since during rush hour, traffic conditions tend to ripple across 
 the city in a more coherent pattern. An accident or bottleneck on one block 
-affects the blocks around it. Off-peak traffic is more random and localized, 
+affects the blocks around it. Off peak traffic is more random and localized, 
 so the spatial signal is weaker.
 
 Second, values around 0.4 are considered moderate rather than strong 
@@ -73,7 +73,7 @@ similar than distant ones. The prerequisite is satisfied.
 
 Moran's I gives a single global summary of spatial autocorrelation across the 
 entire study area. In reality, spatial autocorrelation likely varies across 
-different parts of NYC — it might be stronger in Manhattan where the street 
+different parts of NYC and it might be stronger in Manhattan where the street 
 grid is dense and uniform, and weaker in Staten Island where roads are more 
 dispersed. A local version of Moran's I called LISA (Local Indicators of 
 Spatial Association) would capture this variation and is something I would 

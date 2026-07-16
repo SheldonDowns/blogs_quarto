@@ -46,8 +46,8 @@ Adding support for REST APIs and CSV downloads would open the package up to a
 much wider range of datasets.
 
 Cross validation is currently **random k-fold holdout**. Spatial cross 
-validation — where held-out points are physically separated from training 
-points — would give a more honest picture of prediction accuracy.
+validation where held-out points are physically separated from training 
+points to give a more honest picture of prediction accuracy.
 
 Looking ahead, supporting **time series Kriging** would be the most impactful 
 addition, allowing the package to predict how values change over time across 

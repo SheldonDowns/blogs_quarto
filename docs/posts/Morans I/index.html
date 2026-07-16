@@ -170,7 +170,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="computing-morans-i-in-sedonadb" class="level2">
 <h2 class="anchored" data-anchor-id="computing-morans-i-in-sedonadb">Computing Moran’s I in SedonaDB</h2>
 <p>In my project I computed Moran’s I directly from the sensor pair table I had already built in SedonaDB. The key insight is that Moran’s I should use <strong>inverse distance weights</strong> which means that closer sensor pairs get more influence than distant ones. I also restricted the computation to local neighbours within 2km, since including all pairs across the entire city dilutes the spatial signal.</p>
-<p>One thing that tripped me up early on was computing Moran’s I across all sensor pairs regardless of distance. The values came back at around 0.005 — essentially zero — which was alarming. The fix was restricting to local neighbours only, which brought the values up to a much more meaningful range.</p>
+<p>One thing that tripped me up early on was computing Moran’s I across all sensor pairs regardless of distance. The values came back at around 0.005 which is essentially zero which was alarming. The fix was restricting to local neighbours only, which brought the values up to a much more meaningful range.</p>
 </section>
 <section id="results" class="level2">
 <h2 class="anchored" data-anchor-id="results">Results</h2>
@@ -205,13 +205,13 @@ ul.task-list li input[type="checkbox"] {
 <section id="what-the-results-tell-us" class="level2">
 <h2 class="anchored" data-anchor-id="what-the-results-tell-us">What the Results Tell Us</h2>
 <p>A few things stand out from these numbers.</p>
-<p>First, peak hours have stronger autocorrelation than off-peak. This makes intuitive sense since during rush hour, traffic conditions tend to ripple across the city in a more coherent pattern. An accident or bottleneck on one block affects the blocks around it. Off-peak traffic is more random and localized, so the spatial signal is weaker.</p>
+<p>First, peak hours have stronger autocorrelation than off peak. This makes intuitive sense since during rush hour, traffic conditions tend to ripple across the city in a more coherent pattern. An accident or bottleneck on one block affects the blocks around it. Off peak traffic is more random and localized, so the spatial signal is weaker.</p>
 <p>Second, values around 0.4 are considered moderate rather than strong autocorrelation. This is typical for urban traffic data, where road type (highway vs local street) introduces a lot of local variation that has nothing to do with geography. A highway sensor sitting next to a local street sensor will have very different volumes even though they are physically close, which naturally pulls Moran’s I down.</p>
 <p>Third, and most importantly, the values are positive and meaningful enough to justify Kriging. The data has spatial structure. Nearby sensors are more similar than distant ones. The prerequisite is satisfied.</p>
 </section>
 <section id="limitations" class="level2">
 <h2 class="anchored" data-anchor-id="limitations">Limitations</h2>
-<p>Moran’s I gives a single global summary of spatial autocorrelation across the entire study area. In reality, spatial autocorrelation likely varies across different parts of NYC — it might be stronger in Manhattan where the street grid is dense and uniform, and weaker in Staten Island where roads are more dispersed. A local version of Moran’s I called LISA (Local Indicators of Spatial Association) would capture this variation and is something I would explore in future work.</p>
+<p>Moran’s I gives a single global summary of spatial autocorrelation across the entire study area. In reality, spatial autocorrelation likely varies across different parts of NYC and it might be stronger in Manhattan where the street grid is dense and uniform, and weaker in Staten Island where roads are more dispersed. A local version of Moran’s I called LISA (Local Indicators of Spatial Association) would capture this variation and is something I would explore in future work.</p>
 </section>
 <section id="conclusion" class="level2">
 <h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>

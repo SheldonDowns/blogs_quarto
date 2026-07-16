@@ -20,7 +20,7 @@ But there are two versions of Kriging and picking the right one matters.
 **Ordinary Kriging** assumes traffic volume has a roughly constant mean across 
 the whole city. It just interpolates locally based on nearby sensors.
 
-**Universal Kriging** accounts for a city-wide spatial trend in the data before 
+**Universal Kriging** accounts for an entire spatial trend in the data before 
 interpolating. It is more complex but more accurate when the mean changes 
 systematically across space.
 
@@ -43,7 +43,7 @@ I expected the data to be stationary. I was wrong.
 | Off Peak | 85.99 | Non-stationary |
 
 Traffic volume drops systematically from northwest to southeast NYC. Manhattan 
-and the Bronx have consistently higher volumes than the outer boroughs — denser 
+and the Bronx have consistently higher volumes than the outer boroughs such as denser 
 roads, more commercial activity, more traffic. That is a spatial trend, not 
 random noise, and Ordinary Kriging would have ignored it entirely.
 
@@ -56,7 +56,7 @@ reflects both the city-wide pattern and the local sensor data.
 
 ## Conclusion
 
-Testing for stationarity before fitting a Kriging model is not optional — it 
+Testing for stationarity before fitting a Kriging model is not optional since it 
 determines which version of Kriging is valid for your data. The result surprised 
 me but it made the final prediction surface more honest and more accurate.
 
