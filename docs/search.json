@@ -14,11 +14,53 @@
     "text": "This is a post with executable code."
   },
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Sheldon Downs Blog",
+    "objectID": "posts/Kriging/Index.html",
+    "href": "posts/Kriging/Index.html",
+    "title": "Ordinary vs Universal Kriging: Why Stationarity Matters",
     "section": "",
-    "text": "Moran’s I: Is NYC Traffic Spatially Correlated?\n\n\n\n\n\n\ncode\n\n\nanalysis\n\n\ntools\n\n\n\n\n\n\n\n\n\nJul 10, 2026\n\n\nSheldon Downs\n\n\n\n\n\n\n\n\n\n\n\n\nSedonaDB vs GeoPandas: A Spatial Data Showdown\n\n\n\n\n\n\ncode\n\n\nanalysis\n\n\ntools\n\n\n\n\n\n\n\n\n\nJun 10, 2026\n\n\nSheldon Downs\n\n\n\n\n\n\n\n\n\n\n\n\nPost With Code\n\n\n\n\n\n\nnews\n\n\ncode\n\n\nanalysis\n\n\n\n\n\n\n\n\n\nMay 27, 2026\n\n\nHarlow Malloc\n\n\n\n\n\n\n\n\n\n\n\n\nWelcome To My Blog\n\n\n\n\n\n\nnews\n\n\n\n\n\n\n\n\n\nMay 24, 2026\n\n\nTristan O’Malley\n\n\n\n\n\n\nNo matching items"
+    "text": "Kriging is a spatial interpolation technique that predicts values at unmeasured locations using nearby known values. It is the same technique oil and gas companies use to predict what lies underground between drill sites. In my project I applied it to NYC traffic sensors to predict traffic volume across the entire city.\nBut there are two versions of Kriging and picking the right one matters."
+  },
+  {
+    "objectID": "posts/Kriging/Index.html#what-is-kriging",
+    "href": "posts/Kriging/Index.html#what-is-kriging",
+    "title": "Ordinary vs Universal Kriging: Why Stationarity Matters",
+    "section": "",
+    "text": "Kriging is a spatial interpolation technique that predicts values at unmeasured locations using nearby known values. It is the same technique oil and gas companies use to predict what lies underground between drill sites. In my project I applied it to NYC traffic sensors to predict traffic volume across the entire city.\nBut there are two versions of Kriging and picking the right one matters."
+  },
+  {
+    "objectID": "posts/Kriging/Index.html#ordinary-vs-universal-kriging",
+    "href": "posts/Kriging/Index.html#ordinary-vs-universal-kriging",
+    "title": "Ordinary vs Universal Kriging: Why Stationarity Matters",
+    "section": "Ordinary vs Universal Kriging",
+    "text": "Ordinary vs Universal Kriging\nOrdinary Kriging assumes traffic volume has a roughly constant mean across the whole city. It just interpolates locally based on nearby sensors.\nUniversal Kriging accounts for a city-wide spatial trend in the data before interpolating. It is more complex but more accurate when the mean changes systematically across space.\nThe choice comes down to one question: is your data stationary?"
+  },
+  {
+    "objectID": "posts/Kriging/Index.html#testing-for-stationarity",
+    "href": "posts/Kriging/Index.html#testing-for-stationarity",
+    "title": "Ordinary vs Universal Kriging: Why Stationarity Matters",
+    "section": "Testing for Stationarity",
+    "text": "Testing for Stationarity\nStationarity means the mean and variance are stable across the study area. I tested this by dividing NYC into four quadrants and running a Kruskal-Wallis test to see if traffic volumes differed significantly between them.\nI expected the data to be stationary. I was wrong."
+  },
+  {
+    "objectID": "posts/Kriging/Index.html#results",
+    "href": "posts/Kriging/Index.html#results",
+    "title": "Ordinary vs Universal Kriging: Why Stationarity Matters",
+    "section": "Results",
+    "text": "Results\n\n\n\nTime Period\nH-Statistic\nResult\n\n\n\n\nAM Peak\n86.67\nNon-stationary\n\n\nPM Peak\n43.77\nNon-stationary\n\n\nOff Peak\n85.99\nNon-stationary\n\n\n\nTraffic volume drops systematically from northwest to southeast NYC. Manhattan and the Bronx have consistently higher volumes than the outer boroughs — denser roads, more commercial activity, more traffic. That is a spatial trend, not random noise, and Ordinary Kriging would have ignored it entirely."
+  },
+  {
+    "objectID": "posts/Kriging/Index.html#the-fix",
+    "href": "posts/Kriging/Index.html#the-fix",
+    "title": "Ordinary vs Universal Kriging: Why Stationarity Matters",
+    "section": "The Fix",
+    "text": "The Fix\nSwitching to Universal Kriging with a regional linear drift term told the model to first capture the NW to SE gradient across the city, then interpolate the local variation around that trend. The result is a prediction surface that reflects both the city-wide pattern and the local sensor data."
+  },
+  {
+    "objectID": "posts/Kriging/Index.html#conclusion",
+    "href": "posts/Kriging/Index.html#conclusion",
+    "title": "Ordinary vs Universal Kriging: Why Stationarity Matters",
+    "section": "Conclusion",
+    "text": "Conclusion\nTesting for stationarity before fitting a Kriging model is not optional — it determines which version of Kriging is valid for your data. The result surprised me but it made the final prediction surface more honest and more accurate."
   },
   {
     "objectID": "about.html",
@@ -26,6 +68,13 @@
     "title": "About",
     "section": "",
     "text": "About this blog"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Sheldon Downs Blog",
+    "section": "",
+    "text": "Ordinary vs Universal Kriging: Why Stationarity Matters\n\n\n\n\n\n\nanalysis\n\n\nspatial statistics\n\n\n\n\n\n\n\n\n\nJul 10, 2026\n\n\nSheldon Downs\n\n\n\n\n\n\n\n\n\n\n\n\nMoran’s I: Is NYC Traffic Spatially Correlated?\n\n\n\n\n\n\ncode\n\n\nanalysis\n\n\ntools\n\n\n\n\n\n\n\n\n\nJul 10, 2026\n\n\nSheldon Downs\n\n\n\n\n\n\n\n\n\n\n\n\nSedonaDB vs GeoPandas: A Spatial Data Showdown\n\n\n\n\n\n\ncode\n\n\nanalysis\n\n\ntools\n\n\n\n\n\n\n\n\n\nJun 10, 2026\n\n\nSheldon Downs\n\n\n\n\n\n\n\n\n\n\n\n\nPost With Code\n\n\n\n\n\n\nnews\n\n\ncode\n\n\nanalysis\n\n\n\n\n\n\n\n\n\nMay 27, 2026\n\n\nHarlow Malloc\n\n\n\n\n\n\n\n\n\n\n\n\nWelcome To My Blog\n\n\n\n\n\n\nnews\n\n\n\n\n\n\n\n\n\nMay 24, 2026\n\n\nTristan O’Malley\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "posts/Morans I/index.html",
@@ -53,7 +102,7 @@
     "href": "posts/Morans I/index.html#results",
     "title": "Moran’s I: Is NYC Traffic Spatially Correlated?",
     "section": "Results",
-    "text": "Results\n\n\n\nMoran’s I by Time Period\n\n\n\n\n\nTime Period\nMoran’s I\nPairs\n\n\n\n\nPM Peak\n0.447\n104,370\n\n\nAM Peak\n0.401\n145,626\n\n\nOff Peak\n0.366\n159,641\n\n\n\nAll three time periods show moderate positive spatial autocorrelation, confirming that nearby traffic sensors do tend to have similar values. This is the green light Kriging needs to proceed."
+    "text": "Results\n\n\n\nTime Period\nMoran’s I\nPairs\n\n\n\n\nPM Peak\n0.447\n104,370\n\n\nAM Peak\n0.401\n145,626\n\n\nOff Peak\n0.366\n159,641\n\n\n\nAll three time periods show moderate positive spatial autocorrelation, confirming that nearby traffic sensors do tend to have similar values. This is the green light Kriging needs to proceed."
   },
   {
     "objectID": "posts/Morans I/index.html#what-the-results-tell-us",

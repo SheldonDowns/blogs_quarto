@@ -1,0 +1,62 @@
+---
+title: "Ordinary vs Universal Kriging: Why Stationarity Matters"
+author: "Sheldon Downs"
+date: "2026-07-10"
+categories: [analysis, spatial statistics]
+image: "stationarity.png"
+---
+
+## What is Kriging?
+
+Kriging is a spatial interpolation technique that predicts values at unmeasured 
+locations using nearby known values. It is the same technique oil and gas companies 
+use to predict what lies underground between drill sites. In my project I applied 
+it to NYC traffic sensors to predict traffic volume across the entire city.
+
+But there are two versions of Kriging and picking the right one matters.
+
+## Ordinary vs Universal Kriging
+
+**Ordinary Kriging** assumes traffic volume has a roughly constant mean across 
+the whole city. It just interpolates locally based on nearby sensors.
+
+**Universal Kriging** accounts for a city-wide spatial trend in the data before 
+interpolating. It is more complex but more accurate when the mean changes 
+systematically across space.
+
+The choice comes down to one question: is your data stationary?
+
+## Testing for Stationarity
+
+Stationarity means the mean and variance are stable across the study area. 
+I tested this by dividing NYC into four quadrants and running a Kruskal-Wallis 
+test to see if traffic volumes differed significantly between them.
+
+I expected the data to be stationary. I was wrong.
+
+## Results
+
+| Time Period | H-Statistic | Result |
+|---|---|---|
+| AM Peak | 86.67 | Non-stationary |
+| PM Peak | 43.77 | Non-stationary |
+| Off Peak | 85.99 | Non-stationary |
+
+Traffic volume drops systematically from northwest to southeast NYC. Manhattan 
+and the Bronx have consistently higher volumes than the outer boroughs — denser 
+roads, more commercial activity, more traffic. That is a spatial trend, not 
+random noise, and Ordinary Kriging would have ignored it entirely.
+
+## The Fix
+
+Switching to Universal Kriging with a regional linear drift term told the model 
+to first capture the NW to SE gradient across the city, then interpolate the 
+local variation around that trend. The result is a prediction surface that 
+reflects both the city-wide pattern and the local sensor data.
+
+## Conclusion
+
+Testing for stationarity before fitting a Kriging model is not optional — it 
+determines which version of Kriging is valid for your data. The result surprised 
+me but it made the final prediction surface more honest and more accurate.
+

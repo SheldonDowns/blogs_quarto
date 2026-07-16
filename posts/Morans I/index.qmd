@@ -38,8 +38,6 @@ brought the values up to a much more meaningful range.
 
 ## Results
 
-![Moran's I by Time Period](morans_i_local.png)
-
 | Time Period | Moran's I | Pairs |
 |---|---|---|
 | PM Peak | 0.447 | 104,370 |
